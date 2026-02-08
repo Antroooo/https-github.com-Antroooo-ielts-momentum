@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Momentum</title>
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --primary:#1e40af;
+      --accent:#22c55e;
+      --accent-600:#16a34a;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: #111827;
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      background:var(--primary);
+      color:white;
+      padding:32px 16px;
+      text-align:center;
+    }
+    .wrap{max-width:var(--max-width);margin:20px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    section{background:var(--card);padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(16,24,40,0.06)}
+    .col-6{grid-column:span 6}
+    .col-12{grid-column:span 12}
+    h2{margin:0 0 8px}
+    p{color:var(--muted);margin:0 0 12px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--accent);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700}
+    .btn.secondary{background:#eef2ff;color:var(--primary);font-weight:700}
+    .btn:focus{outline:3px solid rgba(34,197,94,0.18)}
+    .muted{color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #eef2ff;text-align:left}
+    th{color:var(--muted);font-weight:600}
+    .badge{background:#fde047;padding:6px 12px;border-radius:20px;font-size:14px;display:inline-block;margin-top:10px}
+    .success{color:green;font-weight:700}
+    .task-status{min-height:1.2em}
+    .leaderboard-row{display:flex;align-items:center;gap:12px}
+    .avatar{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .avatar.aman{background:#a78bfa}
+    .avatar.riya{background:#fb7185}
+    .avatar.karan{background:#60a5fa}
+    .avatar.you{background:#10b981}
+    .leaderboard-cell{display:flex;align-items:center;gap:12px}
+    @media (max-width:900px){
+      .col-6{grid-column:span 12}
+      header{padding:24px}
+    }
+    /* CTA anchor style (from attachment) */
+    .cta{display:inline-block;margin-top:8px;padding:12px 24px;background:#22c55e;color:white;text-decoration:none;border-radius:6px;font-weight:700}
+    .small{font-size:0.9rem}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+    .modal{background:white;border-radius:8px;max-width:520px;width:100%;padding:20px}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>IELTS Momentum</h1>
+  <p class="small">Turn last-minute cramming into daily wins — build small habits that stick.</p>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <section class="col-6" aria-labelledby="trialHeading">
+      <h2 id="trialHeading">🎯 1-Week Free Trial</h2>
+      <p>Complete daily goals to build momentum and climb the leaderboard.</p>
+      <div class="actions">
+        <button id="completeBtn" class="btn" aria-controls="taskStatus">Complete Today's Goal</button>
+        <a href="#" class="cta" id="startTrial">Start Your 1-Week Free Trial</a>
+      </div>
+      <p id="taskStatus" class="task-status" aria-live="polite"></p>
+    </section>
+
+    <section class="col-6" aria-labelledby="progressHeading">
+      <h2 id="progressHeading">🔥 Your Progress</h2>
+      <p><strong>Daily Streak:</strong> <span id="streak">0</span> days</p>
+      <p><strong>Total Score:</strong> <span id="score">0</span></p>
+      <div id="badge" aria-hidden="false"></div>
+      <p class="small muted">Progress is saved locally in your browser.</p>
+    </section>
+
+    <section class="col-12" aria-labelledby="leaderHeading">
+      <h2 id="leaderHeading">🏆 Daily Momentum Leaderboard</h2>
+      <table role="table" aria-label="Leaderboard">
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Learner</th>
+            <th scope="col">Score</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard"></tbody>
+      </table>
+    </section>
+
+    <section class="col-6" aria-labelledby="testHeading">
+      <h2 id="testHeading">📝 Weekly Test & Feedback</h2>
+      <p>Take a short weekly test to evaluate your progress.</p>
+      <div class="actions">
+        <button id="takeTestBtn" class="btn secondary">Take Weekly Test</button>
+        <button id="viewFeedbackBtn" class="btn" style="display:none">View Last Feedback</button>
+      </div>
+      <p id="feedback" aria-live="polite"></p>
+    </section>
+
+    <section class="col-6" aria-labelledby="tipsHeading">
+      <h2 id="tipsHeading">💡 Quick Tips</h2>
+      <ul class="small muted">
+        <li>Keep sessions to 25 minutes for better retention.</li>
+        <li>Focus one skill each day: reading, writing, speaking.</li>
+        <li>Use the leaderboard to stay motivated.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<!-- Modal (hidden by default) -->
+<div id="modalRoot" style="display:none"></div>
+
+<script>
+  // Basic state with persistence
+  const STORAGE_KEY = 'ielts_momentum_state_v1';
+
+  let user = { name: 'You', score: 0, streak: 0 };
+  let learners = [
+    { name: 'Aman', score: 40, id:'aman' },
+    { name: 'Riya', score: 35, id:'riya' },
+    { name: 'Karan', score: 30, id:'karan' },
+    user
+  ];
+
+  // load state
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const s = JSON.parse(raw);
+        if(s.user) user = Object.assign(user, s.user);
+        if(Array.isArray(s.learners)) learners = s.learners;
+      }
+    }catch(e){console.warn('loadState failed',e)}
+  }
+
+  function saveState(){
+    try{localStorage.setItem(STORAGE_KEY, JSON.stringify({user, learners}))}catch(e){console.warn('save failed',e)}
+  }
+
+  // UI helpers
+  function showStatus(msg, success=false){
+    const el = document.getElementById('taskStatus');
+    el.innerHTML = success ? `<span class='success'>${msg}</span>` : msg;
+  }
+
+  function updateBadge(){
+    const b = document.getElementById('badge');
+    if(user.streak >= 7) b.innerHTML = `<div class='badge'>🏆 7-Day Consistency Champion</div>`;
+    else if(user.streak >= 3) b.innerHTML = `<div class='badge'>🔥 ${user.streak}-Day Streak</div>`;
+    else b.innerHTML = '';
+  }
+
+  function updateLeaderboard(){
+    learners.sort((a,b)=>b.score - a.score);
+    const tbody = document.getElementById('leaderboard');
+    tbody.innerHTML = '';
+    learners.forEach((l,i)=>{
+      const tr = document.createElement('tr');
+      const rank = document.createElement('td'); rank.textContent = i+1;
+      const nameTd = document.createElement('td');
+      const wrapper = document.createElement('div'); wrapper.className='leaderboard-row';
+      const avatar = document.createElement('div'); avatar.className='avatar '+(l.id||'you');
+      avatar.textContent = (l.name||'').split(' ').map(s=>s[0]).join('').slice(0,2).toUpperCase();
+      const label = document.createElement('div'); label.innerHTML = `<div style="font-weight:700">${l.name}</div><div class='small muted'>${l.streak||0} day streak</div>`;
+      wrapper.appendChild(avatar); wrapper.appendChild(label);
+      nameTd.appendChild(wrapper);
+      const scoreTd = document.createElement('td'); scoreTd.textContent = l.score;
+      tr.appendChild(rank); tr.appendChild(nameTd); tr.appendChild(scoreTd);
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Primary actions
+  function completeTask(){
+    user.score += 10;
+    user.streak += 1;
+    // ensure learners contains latest user object
+    const idx = learners.findIndex(l=>l.name==='You');
+    if(idx >= 0) learners[idx] = user; else learners.push(user);
+    document.getElementById('score').innerText = user.score;
+    document.getElementById('streak').innerText = user.streak;
+    showStatus('Daily goal completed! Momentum increased.', true);
+    updateBadge();
+    saveState();
+    updateLeaderboard();
+  }
+
+  function openModal(contentHtml){
+    const root = document.getElementById('modalRoot');
+    root.innerHTML = `
+      <div class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">${contentHtml}<div style="text-align:right;margin-top:12px"><button id='closeModal' class='btn secondary'>Close</button></div></div>
+      </div>`;
+    root.style.display = 'block';
+    document.getElementById('closeModal').focus();
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+  }
+  function closeModal(){document.getElementById('modalRoot').style.display='none';document.getElementById('modalRoot').innerHTML='';}
+
+  function takeTest(){
+    // open simple modal that simulates a test and returns a score
+    const content = `
+      <h3>Your Weekly Test</h3>
+      <p class='small muted'>This quick check helps guide your next week's focus.</p>
+      <p><button id='runTest' class='btn'>Run Test (quick)</button></p>
+      <div id='testResult'></div>`;
+    openModal(content);
+    document.getElementById('runTest').addEventListener('click', ()=>{
+      const marks = Math.floor(Math.random()*41)+60; // 60-100
+      const advice = marks < 75 ? 'Focus more on speaking and reading practice.' : 'Great! Keep practicing writing and timed reading.';
+      const resultHtml = `<p>You scored <strong>${marks}%</strong>.</p><p class='small muted'>Feedback: ${advice}</p>`;
+      document.getElementById('testResult').innerHTML = resultHtml;
+      // save feedback in localStorage
+      try{ localStorage.setItem('lastTestResult', JSON.stringify({marks, advice, at:Date.now()})); document.getElementById('viewFeedbackBtn').style.display='inline-flex'; }catch(e){}
+      // update main feedback area too
+      document.getElementById('feedback').innerHTML = `You scored <strong>${marks}%</strong>. ${advice}`;
+      closeModal();
+    });
+  }
+
+  function showLastFeedback(){
+    const raw = localStorage.getItem('lastTestResult');
+    if(!raw){ showStatus('No previous test found.'); return; }
+    const s = JSON.parse(raw);
+    const time = new Date(s.at);
+    openModal(`<h3>Last Test</h3><p>You scored <strong>${s.marks}%</strong> on ${time.toLocaleString()}.</p><p class='small muted'>${s.advice}</p>`);
+  }
+
+  // Init
+  loadState();
+  document.getElementById('score').innerText = user.score;
+  document.getElementById('streak').innerText = user.streak;
+  updateBadge();
+  updateLeaderboard();
+
+  // Wire up buttons
+  document.getElementById('completeBtn').addEventListener('click', completeTask);
+  document.getElementById('completeBtn').addEventListener('keyup', (e)=>{ if(e.key==='Enter') completeTask(); });
+  document.getElementById('takeTestBtn').addEventListener('click', takeTest);
+  document.getElementById('viewFeedbackBtn').addEventListener('click', showLastFeedback);
+
+  // show view feedback button if exists
+  if(localStorage.getItem('lastTestResult')) document.getElementById('viewFeedbackBtn').style.display='inline-flex';
+
+  // small accessibility: allow CTA to be keyboard-friendly
+  document.getElementById('startTrial').addEventListener('keydown', (e)=>{ if(e.key==='Enter') window.location='#'; });
+
+  // expose for debugging in console
+  window.__IM = {user, learners, completeTask, takeTest};
+</script>
+
+</body>
+</html>
